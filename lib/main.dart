@@ -1,6 +1,12 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'dart:convert';
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io' as Io;
+
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -33,14 +39,54 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late final XFile? image;
+  late final XFile? pickedImage;
   late final bytes;
+  late Future<int> myLength;
+  uploadImage() async {
+    final request = http.MultipartRequest(
+        "POST", Uri.parse("http://localhost:4000/flutter"));
+    final headers = {"Content-type": "multipart/form-data"};
+
+    request.files.add(http.MultipartFile(
+        'image', pickedImage!.readAsBytes().asStream(), 20,
+        filename: pickedImage!.name));
+
+    request.headers.addAll(headers);
+    final response = await request.send();
+    http.Response res = await http.Response.fromStream(response);
+    final resJson = jsonDecode(res.body);
+
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+                title: Text('Successful'),
+                content: Text(resJson['message']),
+                actions: [
+                  TextButton(
+                      child: Text('OK'),
+                      onPressed: () => Navigator.pop(context))
+                ]));
+
+    setState(() {});
+  }
 
   Future<void> _imagePicker() async {
     final ImagePicker _picker = ImagePicker();
-    image = await _picker.pickImage(source: ImageSource.gallery);
-    bytes = await image!.readAsBytes();
-    //print(bytes);
+    pickedImage = await _picker.pickImage(source: ImageSource.gallery);
+    myLength = pickedImage!.length();
+    bytes = await pickedImage!.readAsBytes();
+
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+                title: Text('Successful'),
+                content: Text('Your image was successfully picked'),
+                actions: [
+                  TextButton(
+                      child: Text('OK'),
+                      onPressed: () => Navigator.pop(context))
+                ]));
+
     setState(() {});
   }
 
@@ -64,9 +110,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'Choose the image you want to draw',
+            Text(
+              'Click upload after selecting an image',
             ),
+            TextButton.icon(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.blue),
+                ),
+                onPressed: uploadImage,
+                icon: Icon(Icons.upload_file, color: Colors.white),
+                label: Text("Upload", style: TextStyle(color: Colors.white)))
           ],
         ),
       ),
