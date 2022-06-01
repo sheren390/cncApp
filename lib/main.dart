@@ -44,8 +44,10 @@ class _MyHomePageState extends State<MyHomePage> {
   late final bytes;
   late Future<int> myLength;
   uploadImage() async {
-    final request = http.MultipartRequest(
-        "POST", Uri.parse("http://localhost:4000/flutter"));
+    // Modify this url with server(host) Ipv4 address
+    const String serverUrl = "http://192.168.1.13:4000/flutter";
+
+    final request = http.MultipartRequest("POST", Uri.parse(serverUrl));
     final headers = {"Content-type": "multipart/form-data"};
 
     request.files.add(http.MultipartFile(
@@ -56,6 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final response = await request.send();
     http.Response res = await http.Response.fromStream(response);
     final resJson = jsonDecode(res.body);
+    // print(resJson.toString());
 
     showDialog(
         context: context,
