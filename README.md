@@ -1,16 +1,19 @@
-# app
-
-A new Flutter project.
+# CNC APP
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+1- In the terminal, run the following command:
 
-A few resources to get you started if this is your first Flutter project:
+```sh
+flutter pub get
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+<br>
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+2- After installing all required packages, run the app using:
+
+```sh
+flutter run
+```
+
+3- Select the window, by typing down its number in the terminal when asked to, where your application will run through. (Microsoft Edge is recommended)
